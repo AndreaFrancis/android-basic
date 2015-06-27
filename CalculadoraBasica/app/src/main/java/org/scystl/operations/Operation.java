@@ -1,4 +1,4 @@
-package operations;
+package org.scystl.operations;
 
 /**
  * Created by Andrea on 25/06/2015.

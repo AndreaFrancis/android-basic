@@ -81,7 +81,8 @@
                     android:layout_weight="1"
                     android:padding="0dp"
                     android:textSize="35dp"
-                    android:background="#ffffffff" />
+                    android:background="#ffffffff"
+                    android:onClick="onTouchDot"/>
             </LinearLayout>
 
             <LinearLayout
@@ -183,7 +184,8 @@
                     android:padding="0dp"
                     android:textSize="35dp"
                     android:background="#ff4fc3f7"
-                    android:textColor="#ffffffff" />
+                    android:textColor="#ffffffff"
+                    android:onClick="calculate"/>
             </LinearLayout>
 
             <LinearLayout
