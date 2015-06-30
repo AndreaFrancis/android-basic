@@ -1,0 +1,36 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:weightSum="8"
+        android:id="@+id/linearLayout">
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:text="Agregar"
+            android:id="@+id/btn_AddTodo"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal"
+            android:background="#ff3dd4ff"
+            android:textColor="#ffffffff"
+            android:textStyle="bold"
+            android:textSize="25dp"
+            android:onClick="addTodo"/>
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:id="@+id/listView"
+            android:layout_weight="7" />
+
+    </LinearLayout>
+
+</RelativeLayout>
