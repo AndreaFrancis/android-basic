@@ -3,6 +3,7 @@ package org.scystl.database;
 import com.activeandroid.query.Select;
 
 import org.scystl.entities.Todo;
+import org.scystl.todolist.MainActivity;
 
 import java.util.List;
 

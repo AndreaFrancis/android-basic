@@ -12,25 +12,22 @@
         android:weightSum="8"
         android:id="@+id/linearLayout">
 
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:text="Agregar"
-            android:id="@+id/btn_AddTodo"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:background="#ff3dd4ff"
-            android:textColor="#ffffffff"
-            android:textStyle="bold"
-            android:textSize="25dp"
-            android:onClick="addTodo"/>
-
         <ListView
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:id="@+id/listView"
             android:layout_weight="7" />
-
     </LinearLayout>
+    <com.rey.material.widget.FloatingActionButton
+        style="@style/Material.Widget.FloatingActionButton.Light"
+        android:id="@+id/fab_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
 
+        android:onClick="addTodo"
+
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp" />
 </RelativeLayout>

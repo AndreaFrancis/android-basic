@@ -6,33 +6,38 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.activeandroid.ActiveAndroid;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
+import org.scystl.adapters.TodoCursorAdapter;
 import org.scystl.database.TodoDAO;
 import org.scystl.entities.Todo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
 
-    private TextView textView;
-    private List<Todo> todos;
     private ListView listView;
+    private ArrayAdapter<Todo> arrayAdapter;
 
     private void init() {
-        this.textView = (TextView) findViewById(R.id.txt_TodoText);
-        this.todos = new ArrayList<>();
         this.listView = (ListView) findViewById(R.id.listView);
+        this.listView.setOnItemClickListener(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         List<Todo> todos = TodoDAO.getAll();
-        ArrayAdapter<Todo> arryaAdapter = new ArrayAdapter<Todo>(this, R.layout.activity_todo_list, R.id.template,todos);
-        listView.setAdapter(arryaAdapter);
+        arrayAdapter = new ArrayAdapter<Todo>(this, R.layout.activity_todo_list, R.id.template,todos);
+        listView.setAdapter(arrayAdapter);
     }
 
     @Override
@@ -64,18 +69,31 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+
     public void addTodo(View view) {
-       /*
-        String text = this.textView.getText().toString();
-        Todo newTodo = new Todo(text);
-        this.todos.add(newTodo);
-        newTodo.save();
-        Toast.makeText(getApplicationContext(),
-                this.todos.size()+"", Toast.LENGTH_SHORT).show();
-        */
-        Intent newTodo = new Intent(this, NewTodoActivity.class);
-        startActivity(newTodo);
+        new MaterialDialog.Builder(this).title("Nueva tarea").customView(R.layout.activity_new_todo,true).positiveText("Guardar").negativeText("Cancelar").callback(new MaterialDialog.ButtonCallback() {
+                    @Override
+                    public void onPositive(MaterialDialog dialog) {
+                        View view = dialog.getCustomView();
+                        EditText todoName = (EditText)view.findViewById(R.id.txt_Name);
+                        Todo newTodo = TodoDAO.insert(todoName.getText().toString());
+                        int position = arrayAdapter.getCount();
+                        arrayAdapter.insert(newTodo, position);
+                        arrayAdapter.notifyDataSetChanged();
+                    }
+                }).show();
     }
 
 
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        Todo selectedTodo =  (Todo)listView.getItemAtPosition(position);
+        selectedTodo.delete();
+        Toast.makeText(getApplicationContext(),
+                "Se ha eliminado la tarea", Toast.LENGTH_SHORT).show();
+        arrayAdapter.remove(selectedTodo);
+        arrayAdapter.notifyDataSetChanged();
+
+    }
 }
