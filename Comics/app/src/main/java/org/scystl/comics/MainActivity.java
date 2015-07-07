@@ -28,6 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.scystl.comics.org.scystl.comics.model.ComicCharacter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class MainActivity extends ActionBarActivity {
     private boolean isSearchOptionActive = false;
     private EditText searchEditText;
     private ListView charactersListView;
-    private ArrayAdapter<String> charactersAdapter;
+    //private ArrayAdapter<String> charactersAdapter;
 
 
     @Override
@@ -136,16 +137,22 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private void setAdapter(List<String> result) {
-        charactersAdapter = new ArrayAdapter<String>(this, R.layout.comic_template, R.id.comic_description,result);
+    //private void setAdapter(List<String> result) {
+    private void setAdapter(List<ComicCharacter> result) {
+        //charactersAdapter = new ArrayAdapter<String>(this, R.layout.comic_template, R.id.comic_description,result);
+        //charactersListView.setAdapter(charactersAdapter);
+        CharactersAdapter charactersAdapter = new CharactersAdapter(result, this);
         charactersListView.setAdapter(charactersAdapter);
+
     }
 
-    private class HttpGetTask extends AsyncTask<Void, Void, List<String>> {
+    private class HttpGetTask extends AsyncTask<Void, Void, List<ComicCharacter>> {
+    //private class HttpGetTask extends AsyncTask<Void, Void, List<String>> {
 
             AndroidHttpClient mClient = AndroidHttpClient.newInstance("");
             @Override
-            protected List<String> doInBackground(Void... params) {
+            //protected List<String> doInBackground(Void... params) {
+            protected List<ComicCharacter> doInBackground(Void... params) {
                 String name = searchEditText.getText().toString();
                 String uri = "http://www.comicvine.com/api/characters/?api_key=5058299fc15a6d36a59ab14558aa093ed00cb491&filter=name:"+name+"&sort=name:%20desc&limit=10&format=json";
                 HttpGet request = new HttpGet(uri);
@@ -161,23 +168,29 @@ public class MainActivity extends ActionBarActivity {
             }
 
             @Override
-            protected void onPostExecute(List<String> result) {
+            //protected void onPostExecute(List<String> result) {
+            protected void onPostExecute(List<ComicCharacter> result) {
                 if (null != mClient)
                     mClient.close();
                 setAdapter(result);
             }
      }
 
-     private class JSONResponseHandler implements ResponseHandler<List<String>> {
+    private class JSONResponseHandler implements ResponseHandler<List<ComicCharacter>> {
+     //private class JSONResponseHandler implements ResponseHandler<List<String>> {
 
             private static final String RESULTS_TAG = "results";
             private static final String NAME_TAG = "name";
             private static final String REAL_NAME_TAG = "real_name";
+            private static final String ALIAS_TAG = "aliases";
 
             @Override
-            public List<String> handleResponse(HttpResponse response)
+            //public List<String> handleResponse(HttpResponse response)
+            public List<ComicCharacter> handleResponse(HttpResponse response)
                     throws ClientProtocolException, IOException {
-                List<String> result = new ArrayList<String>();
+
+                //List<String> result = new ArrayList<String>();
+                List<ComicCharacter> result = new ArrayList<ComicCharacter>();
                 String JSONResponse = new BasicResponseHandler()
                         .handleResponse(response);
                 try {
@@ -191,7 +204,10 @@ public class MainActivity extends ActionBarActivity {
                     for (int idx = 0; idx < characters.length(); idx++) {
                         JSONObject comicCharacter = (JSONObject) characters.get(idx);
                         String name = comicCharacter.get(NAME_TAG).toString();
-                        result.add(comicCharacter.get(NAME_TAG)+" : "+comicCharacter.get(REAL_NAME_TAG)) ;
+                        String alias = comicCharacter.get(ALIAS_TAG).toString();
+                        ComicCharacter newCharacter = new ComicCharacter(name, alias);
+                        result.add(newCharacter);
+                        //result.add(comicCharacter.get(NAME_TAG)+" : "+comicCharacter.get(REAL_NAME_TAG)) ;
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
