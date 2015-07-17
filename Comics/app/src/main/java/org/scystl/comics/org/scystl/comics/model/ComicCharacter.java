@@ -1,19 +1,25 @@
 package org.scystl.comics.org.scystl.comics.model;
 
+
+import java.io.Serializable;
+
 /**
  * Created by Andrea on 05/07/2015.
  */
-public class ComicCharacter {
+public class ComicCharacter implements Serializable{
     private String id;
     private String name;
     private String alias;
     private String gender;
     private String realName;
     private String imageUrl;
+    private String details;
 
-    public ComicCharacter(String name, String alias) {
+    public ComicCharacter(String name, String alias, String url, String details) {
         this.name = name;
         this.alias = alias;
+        this.imageUrl = url;
+        this.details  = android.text.Html.fromHtml(details).toString();
     }
 
     public ComicCharacter(String id, String name, String alias, String gender, String realName, String imageUrl) {
@@ -49,6 +55,10 @@ public class ComicCharacter {
         return imageUrl;
     }
 
+    public String getDetails() {
+        return details;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -71,5 +81,9 @@ public class ComicCharacter {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
     }
 }

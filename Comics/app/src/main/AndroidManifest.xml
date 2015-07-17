@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.scystl.comics" >
+
     <uses-permission android:name="android.permission.INTERNET" >
     </uses-permission>
 
@@ -21,6 +22,10 @@
         <activity
             android:name=".NetworkingAndroidHTTPClientJson"
             android:label="@string/title_activity_networking_android_httpclient_json" >
+        </activity>
+        <activity
+            android:name=".CharacterDetailActivity"
+            android:label="@string/title_activity_comic_detail" >
         </activity>
     </application>
 

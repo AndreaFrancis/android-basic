@@ -2,6 +2,7 @@ package org.scystl.comics;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
@@ -12,12 +13,15 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -35,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
 
     public String MAIN_ACTIVITY_TAG = "MainActivity";
     private Toolbar mainToolbar;
@@ -43,7 +47,7 @@ public class MainActivity extends ActionBarActivity {
     private boolean isSearchOptionActive = false;
     private EditText searchEditText;
     private ListView charactersListView;
-    //private ArrayAdapter<String> charactersAdapter;
+    private CharactersAdapter charactersAdapter;
 
 
     @Override
@@ -51,6 +55,7 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         charactersListView = (ListView) findViewById(R.id.listView);
+        charactersListView.setOnItemClickListener(this);
         mainToolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(mainToolbar);
     }
@@ -137,21 +142,24 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    //private void setAdapter(List<String> result) {
     private void setAdapter(List<ComicCharacter> result) {
-        //charactersAdapter = new ArrayAdapter<String>(this, R.layout.comic_template, R.id.comic_description,result);
-        //charactersListView.setAdapter(charactersAdapter);
-        CharactersAdapter charactersAdapter = new CharactersAdapter(result, this);
+        charactersAdapter = new CharactersAdapter(result, this);
         charactersListView.setAdapter(charactersAdapter);
 
     }
 
-    private class HttpGetTask extends AsyncTask<Void, Void, List<ComicCharacter>> {
-    //private class HttpGetTask extends AsyncTask<Void, Void, List<String>> {
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+        ComicCharacter characterSelected = this.charactersAdapter.getItem(position);
+        Intent characterDetailIntent = new Intent(this, CharacterDetailActivity.class);
+        characterDetailIntent.putExtra("currentCharacter", characterSelected);
+        startActivity(characterDetailIntent);
+    }
 
+
+    private class HttpGetTask extends AsyncTask<Void, Void, List<ComicCharacter>> {
             AndroidHttpClient mClient = AndroidHttpClient.newInstance("");
             @Override
-            //protected List<String> doInBackground(Void... params) {
             protected List<ComicCharacter> doInBackground(Void... params) {
                 String name = searchEditText.getText().toString();
                 String uri = "http://www.comicvine.com/api/characters/?api_key=5058299fc15a6d36a59ab14558aa093ed00cb491&filter=name:"+name+"&sort=name:%20desc&limit=10&format=json";
@@ -183,6 +191,9 @@ public class MainActivity extends ActionBarActivity {
             private static final String NAME_TAG = "name";
             private static final String REAL_NAME_TAG = "real_name";
             private static final String ALIAS_TAG = "aliases";
+            private static final String IMAGE_TAG = "image";
+            private static final String ICON_URL = "icon_url";
+            private static final String DETAILS_TAG  = "description";
 
             @Override
             //public List<String> handleResponse(HttpResponse response)
@@ -195,8 +206,7 @@ public class MainActivity extends ActionBarActivity {
                         .handleResponse(response);
                 try {
 
-                    JSONObject responseObject = (JSONObject) new JSONTokener(
-                            JSONResponse).nextValue();
+                    JSONObject responseObject = (JSONObject) new JSONTokener(JSONResponse).nextValue();
 
                     JSONArray characters = responseObject
                             .getJSONArray(RESULTS_TAG);
@@ -205,9 +215,26 @@ public class MainActivity extends ActionBarActivity {
                         JSONObject comicCharacter = (JSONObject) characters.get(idx);
                         String name = comicCharacter.get(NAME_TAG).toString();
                         String alias = comicCharacter.get(ALIAS_TAG).toString();
-                        ComicCharacter newCharacter = new ComicCharacter(name, alias);
+                        Object detailsObject = comicCharacter.get(DETAILS_TAG);
+                        String details = "";
+                        if(detailsObject != null) {
+                            details = detailsObject.toString();
+                        }
+
+                        String url = "url";
+                        try {
+                            Object imageObject = comicCharacter.get(IMAGE_TAG);
+                            if(imageObject!=null) {
+                                JSONObject queEs = (JSONObject)imageObject;
+                                url = queEs.get(ICON_URL).toString();
+                            }
+                        }catch(Exception ex) {
+                            Log.e("ERROR ON PARSING",ex.getMessage());
+                        }
+
+
+                        ComicCharacter newCharacter = new ComicCharacter(name, alias, url, details);
                         result.add(newCharacter);
-                        //result.add(comicCharacter.get(NAME_TAG)+" : "+comicCharacter.get(REAL_NAME_TAG)) ;
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
