@@ -27,23 +27,6 @@
         <meta-data
             android:name="AA_MODELS"
             android:value="org.scystl.entities.Todo" />
-
-        <activity
-            android:name=".TodoList"
-            android:label="@string/title_activity_todo_list" >
-        </activity>
-        <activity
-            android:name=".SimpleView"
-            android:label="@string/title_activity_simple_view" >
-        </activity>
-        <activity
-            android:name=".NewTodoActivity"
-            android:label="@string/title_activity_new_todo" >
-        </activity>
-        <activity
-            android:name=".ItemTodo"
-            android:label="@string/title_activity_item_todo" >
-        </activity>
     </application>
 
 </manifest>
