@@ -1,8 +1,7 @@
 package org.scystl.calculadorabasica;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,40 +19,15 @@ import java.util.HashMap;
 
 public class MainActivity extends ActionBarActivity {
 
-    private TextView textResult;
-    private HashMap<String, Operation> operations;
-    private Operation currentOperation;
-    private boolean isEditingFirstValue;
-    private float firstValue = 0;
-    private float secondValue = 0;
-    private boolean isEditingFirstDigit = true;
+    private TextView mResultTextView;
+    private HashMap<String, Operation> mOperations;
+    private Operation mCurrentOperation;
+    private boolean mIsEditingFirstValue;
+    private boolean mIsEditingFirstDigit;
+    private float mFirstValue;
+    private float mSecondValue;
 
 
-    /**Private methods**/
-    private void init() {
-        this.isEditingFirstValue = true;
-        this.textResult = (TextView)findViewById(R.id.txt_result);
-        this.textResult.setText("");
-        this.operations = new HashMap<>();
-        this.operations.put("+", new AditionOperation());
-        this.operations.put("-", new SubtractionOperation());
-        this.operations.put("*", new MultiplyOperation());
-        this.operations.put("/", new DivisionOperation());
-    }
-
-    private void displayInTextResult(String text) {
-        this.textResult.setText(text);
-    }
-
-    private void setValue(String value) {
-        if(isEditingFirstValue) {
-            firstValue = Float.parseFloat(value);
-        }else {
-            secondValue = Float.parseFloat(value);
-        }
-    }
-
-    /**Protected methods**/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,75 +35,96 @@ public class MainActivity extends ActionBarActivity {
         init();
     }
 
-    /**Public methods**/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     public void onTouchNumber(View view) {
         Button numberButton = (Button) view;
         String number = numberButton.getText().toString();
-        String newTextResult;
-        if(isEditingFirstDigit) {
+        String newTextResult = newTextResult = mResultTextView.getText().toString() + number;
+        if (mIsEditingFirstDigit) {
             newTextResult = number;
-            isEditingFirstDigit = false;
-        }else{
-            newTextResult = this.textResult.getText().toString() + number;
+            mIsEditingFirstDigit = false;
         }
-        this.setValue(newTextResult);
-        this.displayInTextResult(newTextResult);
+        setValue(newTextResult);
     }
 
-    public void onTouchOperation(View view){
+    public void onTouchOperation(View view) {
         Button operationButton = (Button) view;
         String operationText = operationButton.getText().toString();
-        Operation selectedOperation = this.operations.get(operationText);
-
-        if(!this.isEditingFirstValue) {
-            if(this.currentOperation != null){
-                this.firstValue = this.currentOperation.calculate(this.firstValue, this.secondValue);
-            }else{
-                this.firstValue = this.secondValue;
+        Operation selectedOperation = mOperations.get(operationText);
+        if (!mIsEditingFirstValue) {
+            if (mCurrentOperation != null) {
+                mFirstValue = mCurrentOperation.calculate(mFirstValue, mSecondValue);
+            } else {
+                mFirstValue = mSecondValue;
             }
         }
-        this.isEditingFirstValue  = false;
-        this.displayInTextResult("");
-        this.currentOperation = selectedOperation;
+        mIsEditingFirstValue = false;
+        displayInResultText("");
+        mCurrentOperation = selectedOperation;
     }
 
     public void onTouchDot(View view) {
-        String currentText = this.textResult.getText().toString();
-        if(!currentText.contains(".")) {
-            displayInTextResult(currentText+".");
+        String currentText = mResultTextView.getText().toString();
+        if (!currentText.contains(".")) {
+            displayInResultText(currentText + ".");
         }
     }
 
     public void calculate(View view) {
-        if (this.currentOperation != null) {
-            float result = this.currentOperation.calculate(this.firstValue, this.secondValue);
-            this.firstValue = result;
-            this.isEditingFirstValue = true;
-            this.isEditingFirstDigit = true;
-            this.displayInTextResult(result + "");
-            this.currentOperation = null;
+        if (mCurrentOperation != null) {
+            float result = mCurrentOperation.calculate(mFirstValue, mSecondValue);
+            mFirstValue = result;
+            displayInResultText(result + "");
+            setUpInitialValues();
         }
+    }
+
+    private void init() {
+        mFirstValue = 0;
+        mSecondValue = 0;
+        mResultTextView = (TextView) findViewById(R.id.txt_result);
+        mResultTextView.setText("");
+
+        //Adding supported operations
+        mOperations = new HashMap<>();
+        mOperations.put("+", new AditionOperation());
+        mOperations.put("-", new SubtractionOperation());
+        mOperations.put("*", new MultiplyOperation());
+        mOperations.put("/", new DivisionOperation());
+
+        setUpInitialValues();
+    }
+
+    private void setUpInitialValues() {
+        mIsEditingFirstDigit = true;
+        mIsEditingFirstValue = true;
+        mCurrentOperation = null;
+    }
+
+    private void displayInResultText(String text) {
+        mResultTextView.setText(text);
+    }
+
+    private void setValue(String value) {
+        if (mIsEditingFirstValue) {
+            mFirstValue = Float.parseFloat(value);
+        } else {
+            mSecondValue = Float.parseFloat(value);
+        }
+        displayInResultText(value);
     }
 }

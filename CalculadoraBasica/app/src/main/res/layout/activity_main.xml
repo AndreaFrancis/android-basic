@@ -16,7 +16,7 @@
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
+            android:text="0"
             android:id="@+id/txt_result"
             android:layout_weight="1"
             android:layout_gravity="right"
@@ -25,7 +25,7 @@
             android:gravity="center_vertical|right"
             android:background="#ff4fc3f7"
             android:textColor="#ffffffff"
-            android:paddingRight="10dp" />
+            android:paddingRight="20dp" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -38,7 +38,8 @@
                 android:orientation="vertical"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:weightSum="4">
 
                 <Button
                     android:layout_width="match_parent"
@@ -89,7 +90,8 @@
                 android:orientation="vertical"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:weightSum="4">
 
                 <Button
                     android:layout_width="match_parent"
@@ -140,7 +142,8 @@
                 android:orientation="vertical"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:weightSum="4">
 
                 <Button
                     android:layout_width="match_parent"
@@ -192,7 +195,8 @@
                 android:orientation="vertical"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:weightSum="4">
 
                 <Button
                     android:layout_width="match_parent"
